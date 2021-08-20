@@ -3,7 +3,7 @@ import cv2
 import dlib
 
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('models/shape_predictor_5_face_landmarks.dat')
+predictor = dlib.shape_predictor('shape_predictor_5_face_landmarks.dat')
 
 cap = cv2.VideoCapture(0) # 'imgs/01.mp4'
 width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
@@ -43,10 +43,10 @@ while cap.isOpened():
                 y2 = face.bottom()
 
                 cv2.rectangle(img, pt1=(x1, y1), pt2=(x2, y2), color=(255, 0, 0), thickness=2)
-
+                print('check')
             except:
                 pass
-        cv2.imshow('result', img)
+        
         
     if cv2.waitKey(1) == ord('q'):
         break
