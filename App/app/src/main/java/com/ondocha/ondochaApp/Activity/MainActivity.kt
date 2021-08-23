@@ -43,31 +43,6 @@ class MainActivity : AppCompatActivity() {
         date.setText(year + "년 " + month + "월 " + day + "일")
 
 
-
-
-        /** 임시데이터 **/
-        /**
-        val data1 = hashMapOf(
-        "name" to "AA",
-        "Code" to "1",
-        "Wtem" to 36.5,
-        "Ftem" to 36.5,
-        "time" to "1705"
-        )
-        cusinfo.document("1").set(data1)
-
-        val data2 = hashMapOf(
-        "name" to "BB",
-        "Code" to "2",
-        "Wtem" to 37.5,
-        "Ftem" to 37.5,
-        "time" to "1706"
-        )
-        cusinfo.document("2").set(data2)**/
-
-        //getToken()
-        //Log.e--> Logcat에 토큰 값 나옴....../
-
         get_data()
 
         /** ChartActivity로 이동 **/
