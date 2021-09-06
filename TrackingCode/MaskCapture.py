@@ -12,11 +12,11 @@ model = load_model('models/mask_detector.model')
 cam = cv2.VideoCapture(0)
 
 if not cam.isOpened():
-    print("카메라를 열 수 없습니다.")
+    print("카메라를 실행할 수 없습니다.")
     exit()
 
 cam_cnt = 0 # 프레임 가산
-pic_num = 0 # 사진 이름
+pic_num = 0 # 사진 파일 이름
 
 while True:
     ret, img = cam.read()
@@ -42,7 +42,8 @@ while True:
         if confidence < 0.5:    # min_confidence
             continue
 
-        # 사각형 꼭지점 찾기; x1 = int(dets[0, 0, i, 3] * w) 형식도 무방함
+        # 사각형 꼭지점 찾기
+        # 아래는 x1 = int(dets[0, 0, i, 3] * w) 형식을 수정한 것
         box = dets[0,0,i,3:7]*np.array([w, h, w, h])
         (x1,y1,x2,y2) = box.astype('int')
 

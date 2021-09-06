@@ -1,5 +1,7 @@
 # ResNet model - ResNet50
 
+※ 본 코드는 테스트용이며 차후 바뀔 가능성이 있음
+
 ## ResNet50 모델 사용중 (임시)
 
 ResNet50 architecture : 
@@ -23,10 +25,11 @@ cvlib 패키지 설치
 >conda install tensorflow-gpu
 
 >pip install cvlib
+
+PIL 패키지 설치
+>pip install image
+
 ---
-
-본 코드는 어디까지나 테스트용이며 차후 바뀔 가능성이 매우 높음
-
 ## 변경 이력
 1. Haar cascades
 2. dlib 기반 five point model
