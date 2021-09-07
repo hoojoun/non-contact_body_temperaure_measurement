@@ -9,8 +9,18 @@ from tensorflow.keras.layers import Dense, Flatten, BatchNormalization
 from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 
+
 path_mask = './TestDetector/mask/'
 path_nomask = './TestDetector/nomask/'
+# TestDetector를 제거할 일이 잦아서 추가한 코드, 정식 릴리즈시엔 제거해도 상관 없음
+if not os.path.exists(path_mask):
+    os.makedirs(path_mask)
+    print('mask 폴더가 없습니다.')
+    print(f'\'{path_mask}\' 위치에 mask 폴더를 생성했습니다.')
+if not os.path.exists(path_nomask):
+    os.makedirs(path_nomask)
+    print('nomask 폴더가 없습니다.')
+    print(f'\'{path_nomask}\' 위치에 nomask 폴더를 생성했습니다.')
 
 file_mask = os.listdir(path_mask)   # path에 존재하는 파일 목록 가져오기
 file_nomask = os.listdir(path_nomask)

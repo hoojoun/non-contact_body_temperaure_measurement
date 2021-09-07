@@ -8,8 +8,14 @@ from tensorflow.keras.applications.resnet50 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array   # PIL -> Numpy
 from PIL import ImageFont, ImageDraw, Image
 
-model = load_model('TestDetector/testmodel.h5')
-model.summary() # 모델 구조 요약해서 출력
+try:
+    model_path = 'TestDetector/testmodel.h5'
+    model = load_model(model_path)
+    model.summary() # 모델 구조 요약해서 출력
+except OSError as e:
+    print(f'{e}\nmodel이 없습니다.')
+    exit()
+
 
 cam = cv2.VideoCapture(0)
 if not cam.isOpened():
@@ -31,9 +37,12 @@ while cam.isOpened():
         
         (startX, startY) = pos[0], pos[1]
         (endX, endY) = pos[2], pos[3]
+        roi_center = ((pos[0]+pos[2])/2,(pos[1]+pos[3])/2)
+        cam_center = 1
         
         # start, end 좌표가 img(0~max_img) 안에 있는지 
-        if 0 <= startX <= frame.shape[1] and 0 <= endX <= frame.shape[1] and 0 <= startY <= frame.shape[0] and 0 <= endY <= frame.shape[0]:
+        if 0 <= startX <= frame.shape[1] and 0 <= endX <= frame.shape[1] and\
+           0 <= startY <= frame.shape[0] and 0 <= endY <= frame.shape[0]:
             
             face_region_origin = frame[startY:endY, startX:endX]
             # 보간법 지정; 영상 축소시 효과적인 보간법
@@ -45,17 +54,36 @@ while cam.isOpened():
             
             prediction = model.predict(x)   # 모델 불러와서 예측
  
-            if prediction < 0.5: # 마스크 미착용/
+            if prediction < 0.5: # 마스크 미착용
                 cv2.rectangle(frame, (startX,startY), (endX,endY), (0,0,255), 2)
                 Y = startY - 10 if startY - 10 > 10 else startY + 10    # 범위 조정, 없어도 괜찮음
                 text = "No Mask ({:.2f}%)".format((1 - prediction[0][0])*100)
                 cv2.putText(frame, text, (startX,Y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
+                
+                if roi_center[1]<frame.shape[0]/2:
+                    print('move down')
+                elif roi_center[1]>frame.shape[0]/2:
+                    print('move up')
+                if roi_center[0]<frame.shape[1]/2:
+                    print('move right')
+                elif roi_center[0]>frame.shape[1]/2:
+                    print('move left')
                 
             else: # 마스크 착용
                 cv2.rectangle(frame, (startX,startY), (endX,endY), (0,255,0), 2)
                 Y = startY - 10 if startY - 10 > 10 else startY + 10    # 범위 조정, 없어도 괜찮음
                 text = "Mask ({:.2f}%)".format(prediction[0][0]*100)
                 cv2.putText(frame, text, (startX,Y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
+                
+                if roi_center[1]<frame.shape[0]/2:
+                    print('move down')
+                elif roi_center[1]>frame.shape[0]/2:
+                    print('move up')
+                if roi_center[0]<frame.shape[1]/2:
+                    print('move right')
+                elif roi_center[0]>frame.shape[1]/2:
+                    print('move left')
+                
                 
     # 결과 출력
     cv2.imshow("mask classify", frame)
