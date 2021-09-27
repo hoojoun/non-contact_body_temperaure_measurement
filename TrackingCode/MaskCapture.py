@@ -4,6 +4,7 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.models import load_model
 import numpy as np
 import cv2
+import os
 
 # readNet으로 모델 읽기 -> 하나의 Net 객체 반환
 facenet = cv2.dnn.readNet('models/deploy.prototxt', 'models/res10_300x300_ssd_iter_140000.caffemodel')
@@ -14,6 +15,19 @@ cam = cv2.VideoCapture(0)
 if not cam.isOpened():
     print("카메라를 실행할 수 없습니다.")
     exit()
+
+
+path_mask = './TestDetector/mask/'
+path_nomask = './TestDetector/nomask/'
+# TestDetector를 제거할 일이 잦아서 추가한 코드, 정식 릴리즈시엔 제거해도 상관 없음
+if not os.path.exists(path_mask):
+    print('mask 폴더가 없습니다.')
+    os.makedirs(path_mask)
+    print(f'\'{path_mask}\' 위치에 mask 폴더를 생성했습니다.')
+if not os.path.exists(path_nomask):
+    print('nomask 폴더가 없습니다.')
+    os.makedirs(path_nomask)
+    print(f'\'{path_nomask}\' 위치에 nomask 폴더를 생성했습니다.')
 
 cam_cnt = 0 # 프레임 가산
 pic_num = 0 # 사진 파일 이름

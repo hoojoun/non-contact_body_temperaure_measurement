@@ -12,15 +12,27 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array
 
 path_mask = './TestDetector/mask/'
 path_nomask = './TestDetector/nomask/'
-# TestDetector를 제거할 일이 잦아서 추가한 코드, 정식 릴리즈시엔 제거해도 상관 없음
-if not os.path.exists(path_mask):
-    os.makedirs(path_mask)
+
+if not (os.path.exists(path_mask) and os.path.exists(path_nomask)):
+    print('mask 폴더와 nomask 폴더가 없습니다.')
+    exit()
+elif not os.path.exists(path_mask):
     print('mask 폴더가 없습니다.')
-    print(f'\'{path_mask}\' 위치에 mask 폴더를 생성했습니다.')
-if not os.path.exists(path_nomask):
-    os.makedirs(path_nomask)
+    exit()
+elif not os.path.exists(path_nomask):
     print('nomask 폴더가 없습니다.')
-    print(f'\'{path_nomask}\' 위치에 nomask 폴더를 생성했습니다.')
+    exit()
+
+if (len(os.listdir(path_mask))==0 and len(os.listdir(path_nomask))==0):
+    print('마스크 착용 데이터셋과 마스크 미착용 데이터셋이 없습니다.')
+    exit()
+elif len(os.listdir(path_mask))==0:
+    print('마스크 착용 데이터셋이 없습니다.')
+    exit()  
+elif len(os.listdir(path_nomask))==0:
+    print('마스크 미착용 데이터셋이 없습니다.')
+    exit()
+
 
 file_mask = os.listdir(path_mask)   # path에 존재하는 파일 목록 가져오기
 file_nomask = os.listdir(path_nomask)

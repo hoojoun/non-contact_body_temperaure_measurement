@@ -37,8 +37,7 @@ while cam.isOpened():
         
         (startX, startY) = pos[0], pos[1]
         (endX, endY) = pos[2], pos[3]
-        roi_center = ((pos[0]+pos[2])/2,(pos[1]+pos[3])/2)
-        cam_center = 1
+        roi_center = (pos[1]+pos[3])/2  # y좌표만 보유 (액추에이터는 상하운동만 가능)
         
         # start, end 좌표가 img(0~max_img) 안에 있는지 
         if 0 <= startX <= frame.shape[1] and 0 <= endX <= frame.shape[1] and\
@@ -60,14 +59,10 @@ while cam.isOpened():
                 text = "No Mask ({:.2f}%)".format((1 - prediction[0][0])*100)
                 cv2.putText(frame, text, (startX,Y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
                 
-                if roi_center[1]<frame.shape[0]/2:
+                if roi_center<frame.shape[0]/2:
                     print('move down')
-                elif roi_center[1]>frame.shape[0]/2:
+                elif roi_center>frame.shape[0]/2:
                     print('move up')
-                if roi_center[0]<frame.shape[1]/2:
-                    print('move right')
-                elif roi_center[0]>frame.shape[1]/2:
-                    print('move left')
                 
             else: # 마스크 착용
                 cv2.rectangle(frame, (startX,startY), (endX,endY), (0,255,0), 2)
@@ -75,14 +70,10 @@ while cam.isOpened():
                 text = "Mask ({:.2f}%)".format(prediction[0][0]*100)
                 cv2.putText(frame, text, (startX,Y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
                 
-                if roi_center[1]<frame.shape[0]/2:
+                if roi_center<frame.shape[0]/2:
                     print('move down')
-                elif roi_center[1]>frame.shape[0]/2:
+                elif roi_center>frame.shape[0]/2:
                     print('move up')
-                if roi_center[0]<frame.shape[1]/2:
-                    print('move right')
-                elif roi_center[0]>frame.shape[1]/2:
-                    print('move left')
                 
                 
     # 결과 출력
