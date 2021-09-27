@@ -16,7 +16,7 @@ except OSError as e:
     print(f'{e}\nmodel이 없습니다.')
     exit()
 
-
+recognition_flag = 0 # 마스크 인식 확인용 flag (임시)
 cam = cv2.VideoCapture(0)
 if not cam.isOpened():
     print("실행 가능한 카메라가 없습니다.")
@@ -53,18 +53,7 @@ while cam.isOpened():
             
             prediction = model.predict(x)   # 모델 불러와서 예측
  
-            if prediction < 0.5: # 마스크 미착용
-                cv2.rectangle(frame, (startX,startY), (endX,endY), (0,0,255), 2)
-                Y = startY - 10 if startY - 10 > 10 else startY + 10    # 범위 조정, 없어도 괜찮음
-                text = "No Mask ({:.2f}%)".format((1 - prediction[0][0])*100)
-                cv2.putText(frame, text, (startX,Y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
-                
-                if roi_center<frame.shape[0]/2:
-                    print('move down')
-                elif roi_center>frame.shape[0]/2:
-                    print('move up')
-                
-            else: # 마스크 착용
+            if prediction > 0.5: # 마스크 착용
                 cv2.rectangle(frame, (startX,startY), (endX,endY), (0,255,0), 2)
                 Y = startY - 10 if startY - 10 > 10 else startY + 10    # 범위 조정, 없어도 괜찮음
                 text = "Mask ({:.2f}%)".format(prediction[0][0]*100)
@@ -72,8 +61,27 @@ while cam.isOpened():
                 
                 if roi_center<frame.shape[0]/2:
                     print('move down')
+                    recognition_flag = 1
                 elif roi_center>frame.shape[0]/2:
                     print('move up')
+                    recognition_flag = 1
+
+            else: # 마스크 미착용
+                cv2.rectangle(frame, (startX,startY), (endX,endY), (0,0,255), 2)
+                Y = startY - 10 if startY - 10 > 10 else startY + 10    # 범위 조정, 없어도 괜찮음
+                text = "No Mask ({:.2f}%)".format((1 - prediction[0][0])*100)
+                cv2.putText(frame, text, (startX,Y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
+                
+                if roi_center<frame.shape[0]/2:
+                    print('move down')
+                    recognition_flag = 1
+                elif roi_center>frame.shape[0]/2:
+                    print('move up')
+                    recognition_flag = 1
+            
+    if recognition_flag == 0:
+        print('invalid recognition')
+    recognition_flag = 0
                 
                 
     # 결과 출력
@@ -83,4 +91,4 @@ while cam.isOpened():
     
 # 카메라 사용 종료
 cam.release()
-cv2.destroyAllWindows() 
+cv2.destroyAllWindows()
