@@ -7,6 +7,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.resnet50 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array   # PIL -> Numpy
 from PIL import ImageFont, ImageDraw, Image
+import time
 
 try:
     model_path = 'TestDetector/testmodel.h5'
@@ -17,7 +18,15 @@ except OSError as e:
     exit()
 
 recognition_flag = 0 # 마스크 인식 확인용 flag (임시)
+
 cam = cv2.VideoCapture(0)
+after_time = time.time() # 초기값 (구동 시간)
+
+# 평균 시간 계산식
+cnt = 0 # counter
+sum_term_time = 0
+sum_lead_time = 0
+
 if not cam.isOpened():
     print("실행 가능한 카메라가 없습니다.")
     exit()
@@ -29,12 +38,13 @@ while cam.isOpened():
         print("다음 프레임을 읽을 수 없습니다.")
         exit()
  
+    start_time = time.time() # 처음 시작시 시간 저장용
     # opencv 내장 얼굴인식 함수
     face, confidence = cv.detect_face(frame)   
  
     # 얼굴인식
     for idx, pos in enumerate(face):    # number, position_tmp
-        
+        start_time = time.time() # 처음 시작시 시간 저장용
         (startX, startY) = pos[0], pos[1]
         (endX, endY) = pos[2], pos[3]
         roi_center = (pos[1]+pos[3])/2  # y좌표만 보유 (액추에이터는 상하운동만 가능)
@@ -52,6 +62,7 @@ while cam.isOpened():
             x = preprocess_input(x) # 전처리
             
             prediction = model.predict(x)   # 모델 불러와서 예측
+            print(f'실행 시간 : {time.time()-start_time}')  # 현재 시각 - 얼굴 인식할 때 시간
  
             if prediction > 0.5: # 마스크 착용
                 cv2.rectangle(frame, (startX,startY), (endX,endY), (0,255,0), 2)
@@ -79,6 +90,15 @@ while cam.isOpened():
                     print('move up')
                     recognition_flag = 1
             
+            term_time = time.time()-after_time
+            print(f'term : {term_time}')  # 다음 얼굴 인식까지 걸리는 시간
+            sum_term_time += term_time
+            lead_time = time.time()-start_time  # 현재 시각 - 얼굴 인식할 때 시간 = 얼굴 인식할 때 걸리는 시간
+
+            print(f'time : {lead_time}\n')
+            sum_lead_time += lead_time
+            after_time = time.time() # 얼굴 인식 끝나고 시간 저장
+            cnt += 1
     if recognition_flag == 0:
         print('invalid recognition')
     recognition_flag = 0
@@ -87,6 +107,7 @@ while cam.isOpened():
     # 결과 출력
     cv2.imshow("mask classify", frame)
     if cv2.waitKey(1) == ord('q'):
+        print(f'평균 인식 시간 : {sum_term_time/cnt}, 평균 인식 간격 : {sum_lead_time/cnt}')
         break
     
 # 카메라 사용 종료
