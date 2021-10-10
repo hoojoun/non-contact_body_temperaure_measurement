@@ -106,6 +106,6 @@ def downCamera2():
         pin11.write(1)
         sleep(0.001)
 
-upCamera()
-sleep(7)
-downCamera()
+downCamera2()
+sleep(5)
+
