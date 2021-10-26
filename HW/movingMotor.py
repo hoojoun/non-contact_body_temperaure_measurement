@@ -107,5 +107,3 @@ def downCamera2():
 
 upCamera()
 sleep(7)
-# 7초동안 위로 올리기
-downCamera()
