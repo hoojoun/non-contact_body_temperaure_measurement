@@ -62,7 +62,6 @@ def upCamera2():
         pin11.write(0)
         sleep(0.001)
 
-
 def downCamera2():
     for i in range(60):
         pin8.write(1)
@@ -108,4 +107,3 @@ def downCamera2():
 
 upCamera()
 sleep(7)
-downCamera()

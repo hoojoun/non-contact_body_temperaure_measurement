@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import board
 import busio as io
 import adafruit_mlx90614
