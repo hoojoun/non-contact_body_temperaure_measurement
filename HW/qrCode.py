@@ -33,12 +33,12 @@ while True:
             f2.write(my_code+'\n')
             f2.close()
         elif my_code in used_codes:
-            print("이미 인식된 코드 입니다.!!!")
+            exit()
         else:
             pass
 
     cv2.imshow('QRcode Barcode Scan', frame)
-
+    cv2.moveWindow('QRcode Barcode Scan',-55,0)
     cv2.waitKey(1)
 
 
